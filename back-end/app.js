@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 
+const Thing = require("./models/thing");
+
 const app = express();
 app.use(express.json());
 
@@ -30,12 +32,36 @@ app.use((req, res, next) => {
   next();
 });
 
+//app.use(bodyParser.json()); 
+
 app.post("/api/sauces", (req, res, next) => {
-  console.log(req.body);
-  res.status(201).json({
-    message:"Thing saved successfully"
-  })
-})
+  const thing = new Thing({
+    name: req.body.name,
+    manufacturer: req.body.manufacturer,
+    description: req.body.description,
+    heat: req.body.heat,
+    likes: req.body.likes,
+    dislikes: req.body.dislikes,
+    imageUrl: req.body.imageUrl,
+    mainPepper: req.body.mainPepper,
+    usersLiked: req.body.usersLiked,
+    usersDisliked: req.body.usersDisliked,
+    userId: req.body.userId,
+  });
+  thing.save().then(
+    () => {
+     res.status(201).json({
+        message: "Post saved successfully",
+      })
+    }
+  ).catch(
+    (error) => {
+     rew.status(400).json({
+      error: error
+    });
+   }
+  );
+});
 
 app.get("/api/sauces", (req, res, next) => {
   const sauces = [
