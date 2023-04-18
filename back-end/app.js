@@ -1,12 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRoutes = require('./routes/user');
+const userRoutes = require("./routes/user");
 
 const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://happyfruitninja:OW6ECF67AzQhl8sr@cluster0.v9wwnqa.mongodb.net/test"
+    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.v9wwnqa.mongodb.net/test`
   )
   .then(() => {
     console.log("Successfully connected to MongoDB Atlas.");
@@ -15,6 +15,19 @@ mongoose
     console.log("Unable to connect to MongoDB Atlas.");
     console.error(error);
   });
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  next();
+});
 
 app.use("/api/sauces", (req, res, next) => {
   const sauces = [
@@ -50,6 +63,5 @@ app.use("/api/sauces", (req, res, next) => {
   res.status(200).json(sauces);
 });
 
-
-app.use('/api/auth', userRoutes);
+app.use("/api/auth", userRoutes);
 module.exports = app;

@@ -1,3 +1,6 @@
+require('dotenv').config();
+
+//import
 const http = require('http');
 const app = require('./app');
 
