@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//app.use(bodyParser.json()); 
+//app.use(bodyParser.json());
 
 app.post("/api/sauces", (req, res, next) => {
   const thing = new Thing({
@@ -48,53 +48,41 @@ app.post("/api/sauces", (req, res, next) => {
     usersDisliked: req.body.usersDisliked,
     userId: req.body.userId,
   });
-  thing.save().then(
-    () => {
-     res.status(201).json({
+  thing
+    .save()
+    .then(() => {
+      res.status(201).json({
         message: "Post saved successfully",
-      })
-    }
-  ).catch(
-    (error) => {
-     rew.status(400).json({
-      error: error
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+      });
     });
-   }
-  );
 });
 
-app.get("/api/sauces", (req, res, next) => {
-  const sauces = [
-    {
-      _id: "0000",
-      name: "sauce_0000",
-      manufacturer: "maker_0000",
-      description: "description_0000",
-      heat: 0,
-      likes: 0,
-      dislikes: 0,
-      imageUrl: "string",
-      mainPepper: "string",
-      usersLiked: "string[]",
-      usersDisliked: "string[]",
-      userId: "string",
-    },
-    {
-      _id: "1111",
-      name: "sauce_1111",
-      manufacturer: "maker_1111",
-      description: "description_1111",
-      heat: 1,
-      likes: 1,
-      dislikes: 1,
-      imageUrl: "string",
-      mainPepper: "string",
-      usersLiked: "string[]",
-      usersDisliked: "string[]",
-      userId: "string",
-    },
-  ];
-  res.status(200).json(sauces);
+//getting a specific thing
+app.get('/app/sauces/:id', (req, res, next) => {
+  Thing.findOne({
+    _id: req.params.id
+  }).then((thing) => {
+    res.status(200).json(thing);
+  }).catch((error) => {
+    res.status(404).json({error: error});
+  });
+})
+
+
+//getting a list of things
+app.use("/api/sauces", (req, res, next) => {
+  Thing.find()
+    .then((things) => {
+      res.status(200).json(things);
+    })
+    .catch((error) => {
+      res.status(400).json({error: error});
+    });
 });
 
 app.use("/api/auth", userRoutes);
