@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 
 const app = express();
+app.use(express.json());
 
 mongoose
   .connect(
@@ -29,7 +30,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/sauces", (req, res, next) => {
+app.post("/api/sauces", (req, res, next) => {
+  console.log(req.body);
+  res.status(201).json({
+    message:"Thing saved successfully"
+  })
+})
+
+app.get("/api/sauces", (req, res, next) => {
   const sauces = [
     {
       _id: "0000",
