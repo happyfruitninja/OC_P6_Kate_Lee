@@ -9,7 +9,7 @@ app.use(express.json());
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.v9wwnqa.mongodb.net/test`
+    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.v9wwnqa.mongodb.net/hot_takes`
   )
   .then(() => {
     console.log("Successfully connected to MongoDB Atlas.");
