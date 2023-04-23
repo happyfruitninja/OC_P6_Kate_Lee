@@ -30,6 +30,17 @@ router.post("/", (req, res, next) => {
     });
 });
 
+//getting a list of things
+router.get("/", (req, res, next) => {
+  Thing.find()
+    .then((things) => {
+      res.status(200).json(things);
+    })
+    .catch((error) => {
+      res.status(400).json({ error: error });
+    });
+});
+
 //getting a specific thing
 router.get("/:id", (req, res, next) => {
   Thing.findOne({
@@ -43,11 +54,42 @@ router.get("/:id", (req, res, next) => {
     });
 });
 
-//getting a list of things
-router.get("/", (req, res, next) => {
-  Thing.find()
+//update existing thing database
+router.put("/:id", (req, res, next) => {
+  const thing = new Thing({
+    _id: req.params.id,
+    name: req.body.name,
+    manufacturer: req.body.manufacturer,
+    description: req.body.description,
+    heat: req.body.heat,
+    likes: req.body.likes,
+    dislikes: req.body.dislikes,
+    imageUrl: req.body.imageUrl,
+    mainPepper: req.body.mainPepper,
+    usersLiked: req.body.usersLiked,
+    usersDisliked: req.body.usersDisliked,
+    userId: req.body.userId,
+  });
+  Thing.updateOne({
+    _id: req / params.id,
+  })
     .then((things) => {
-      res.status(200).json(things);
+      res.status(201).json(things);
+      message: "Thing updated successfully";
+    })
+    .catch((error) => {
+      res.status(404).json({ error: error });
+    });
+});
+
+//delete thing
+router.delete("/:id", (req, res, next) => {
+  Thing.deleteOne({
+    _id: req.params.id,
+  })
+    .then((e) => {
+      res.status(200).json();
+      message: "Deleted";
     })
     .catch((error) => {
       res.status(400).json({ error: error });
