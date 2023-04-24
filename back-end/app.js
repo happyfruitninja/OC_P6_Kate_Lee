@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 
-const saucesRoutes = require('./routes/sauces'); //import saucesRoutes
+const sauceRoutes = require('./routes/sauce'); //import sauceRoutes
 
 const app = express();
 app.use(express.json());
@@ -34,6 +34,6 @@ app.use((req, res, next) => {
 
 //app.use(bodyParser.json());
 
-app.use("/api/sauces", saucesRoutes);
+app.use("/api/sauce", sauceRoutes);
 app.use("/api/auth", userRoutes);
 module.exports = app;
