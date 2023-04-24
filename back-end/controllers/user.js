@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
+//implementing signup function
 exports.signup = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
     const user = new User({
@@ -22,6 +23,7 @@ exports.signup = (req, res, next) => {
   });
 };
 
+//implementing login function
 exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
