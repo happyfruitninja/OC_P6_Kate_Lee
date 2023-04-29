@@ -4,18 +4,20 @@ const Sauce = require("../models/sauce");
 //exporting multiple sauces from one file
 exports.createSauce = (req, res, next) => {
   //FIXME parse req.body into a new variable called parsedSauce (then req.body becomes parsedSauce below)
+  const url = req.protocol + "://" + req.get("host");
+  req.body.sauce = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
-    name: req.body.name,
-    manufacturer: req.body.manufacturer,
-    description: req.body.description,
-    heat: req.body.heat,
+    name: req.body.sauce.name,
+    manufacturer: req.body.sauce.manufacturer,
+    description: req.body.sauce.description,
+    heat: req.body.sauce.heat,
     likes: 0,
     dislikes: 0,
-    imageUrl: "",
-    mainPepper: req.body.mainPepper,
+    imageUrl: url + "/images/" + req.file.filename,
+    mainPepper: req.body.sauce.mainPepper,
     usersLiked: [],
     usersDisliked: [],
-    userId: req.body.userId,
+    userId: req.body.sauce.userId,
   });
   sauce
     .save()
@@ -43,7 +45,6 @@ exports.getAllSauces = (req, res, next) => {
 };
 
 //getting a single sauce
-
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({
     _id: req.params.id,
@@ -85,6 +86,7 @@ exports.modifySauce = (req, res, next) => {
 };
 
 //deleting sauces - 1. it checks IF requested id exists, 2.see IF the userId matches the userId of the connected user, 3. DELETE the sauce
+//without step 1 & 2 - Because the front end doesn't send a user ID when requesting to delete. Therefore, you cannot check if the user making the request is the owner of the thing they are trying to delete. This means that anyone with a valid token could delete anyone's thing.
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne(
     { _id: req.params.id }.then((thing) => {

@@ -5,6 +5,7 @@ const MIME_TYPES = {
     'image/png': 'png'
 };
 
+//BUSINESS LOGIC - how multer figures out where to save and how
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images');

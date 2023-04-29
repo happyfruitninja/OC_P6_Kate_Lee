@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
+const path = require("path");
 
 const sauceRoutes = require("./routes/sauce"); //import sauceRoutes
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 });
 
 //app.use(bodyParser.json());
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //register request
 app.use("/api/sauces", sauceRoutes);
