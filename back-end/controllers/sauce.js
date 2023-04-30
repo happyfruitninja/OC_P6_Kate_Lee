@@ -1,5 +1,6 @@
 const sauce = require("../models/sauce");
 const Sauce = require("../models/sauce");
+const fs = require("fs"); //file system
 
 //exporting multiple sauces from one file
 exports.createSauce = (req, res, next) => {
@@ -94,12 +95,11 @@ exports.modifySauce = (req, res, next) => {
     };
   }
 
-  Sauce.updateOne({
-    _id: req / params.id, sauce
-  })
-    .then((sauces) => {
-      res.status(201).json(sauces);
-      message: "Sauce updated successfully";
+  Sauce.updateOne({ _id: req.params.id }, sauce)
+    .then(() => {
+      res.status(201).json({
+        message: "Sauce updated successfully",
+      });
     })
     .catch((error) => {
       res.status(404).json({ error: error });
@@ -109,26 +109,19 @@ exports.modifySauce = (req, res, next) => {
 //deleting sauces - 1. it checks IF requested id exists, 2.see IF the userId matches the userId of the connected user, 3. DELETE the sauce
 //without step 1 & 2 - Because the front end doesn't send a user ID when requesting to delete. Therefore, you cannot check if the user making the request is the owner of the thing they are trying to delete. This means that anyone with a valid token could delete anyone's thing.
 exports.deleteSauce = (req, res, next) => {
-  Sauce.findOne(
-    { _id: req.params.id }.then((thing) => {
-      if (!sauce) {
-        return res.status(404).json({ error: new Error("No such sauce") });
-      }
-      if (sauce.userId !== req.auth.userId) {
-        return res
-          .status(400)
-          .json({ error: new Error("Unauthorized request") });
-      }
+  Sauce.findOne({ _id: req.params.id }).then((sauce) => {
+    const filename = sauce.imageUrl.split("/images/")[1];
+    fs.unlink("images/" + filename, () => {
       Sauce.deleteOne({
         _id: req.params.id,
       })
-        .then((e) => {
+        .then(() => {
           res.status(200).json();
           message: "Deleted";
         })
         .catch((error) => {
           res.status(400).json({ error: error });
         });
-    })
-  );
+    });
+  });
 };

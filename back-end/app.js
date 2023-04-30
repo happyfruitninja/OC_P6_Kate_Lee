@@ -34,6 +34,8 @@ app.use((req, res, next) => {
 });
 
 //app.use(bodyParser.json());
+
+//allow access to static resources such as images?
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 //register request
