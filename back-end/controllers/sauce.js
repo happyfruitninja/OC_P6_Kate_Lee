@@ -4,7 +4,6 @@ const fs = require("fs"); //file system
 
 //exporting multiple sauces from one file
 exports.createSauce = (req, res, next) => {
-  //FIXME parse req.body into a new variable called parsedSauce (then req.body becomes parsedSauce below)
   const url = req.protocol + "://" + req.get("host");
   req.body.sauce = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
@@ -120,7 +119,7 @@ exports.deleteSauce = (req, res, next) => {
           message: "Deleted";
         })
         .catch((error) => {
-          res.status(400).json({ error: error });
+          res.status(400).json({ error: error.message || error });
         });
     });
   });
