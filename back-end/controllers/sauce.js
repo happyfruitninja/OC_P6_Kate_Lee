@@ -124,3 +124,22 @@ exports.deleteSauce = (req, res, next) => {
     });
   });
 };
+
+//when user selects "like" button
+exports.toLike = (req, res, next) => {
+	const thumbsUp = document.querySelector("#like fa-thumbs-up fa-lg far");
+  const sauce = new Sauce (req.body.sauce);
+  const usersLiked = sauce.usersLiked;  
+  const userId = sauce.userId;
+  thumbsUp.addEventListener("click", () => {
+   const user =  Sauce.findOne({_Id: req.params.userId})
+   if(!usersLiked.includes("userId")) {
+      usersLiked.push(userId)
+   } else {
+        null
+   };
+	});
+}
+
+//when user selects "dislike" button
+//when user decides to revert the decision
