@@ -127,19 +127,34 @@ exports.deleteSauce = (req, res, next) => {
 
 //when user selects "like" button
 exports.toLike = (req, res, next) => {
-	const thumbsUp = document.querySelector("#like fa-thumbs-up fa-lg far");
-  const sauce = new Sauce (req.body.sauce);
-  const usersLiked = sauce.usersLiked;  
+  const classLikes = document.querySelector("#likes");
+  const thumbsUp = classLikes.firstChild;
+  const likes = sauce.likes;
+  const likesNumbShown = classLikes.lastChild;
+  const sauce = new Sauce(req.body.sauce);
+  const usersLiked = sauce.usersLiked;
   const userId = sauce.userId;
   thumbsUp.addEventListener("click", () => {
-   const user =  Sauce.findOne({_Id: req.params.userId})
-   if(!usersLiked.includes("userId")) {
-      usersLiked.push(userId)
-   } else {
-        null
-   };
-	});
-}
+    Sauce.find()
+      .then((sauces) => {
+        let i = sauce.userId;
+        for (let i of usersLiked) {
+          if (!usersLiked.includes("userId")) {
+            usersLiked.push(userId);
+            likes += 1;
+            likesNumbShown = likes;
+            res.status(200).json(sauce);
+            message: "like number and id added";
+          } else {
+            null;
+          }
+        }
+      })
+      .catch((error) => {
+        res.status(400).json({ error: error });
+      });
+  });
+};
 
 //when user selects "dislike" button
 //when user decides to revert the decision
