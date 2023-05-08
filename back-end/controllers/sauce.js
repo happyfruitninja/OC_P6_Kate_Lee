@@ -2,7 +2,7 @@ const sauce = require("../models/sauce");
 const Sauce = require("../models/sauce");
 const fs = require("fs"); //file system
 
-//exporting multiple sauces from one file
+//adding a sauce with/without a file
 exports.createSauce = (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
   req.body.sauce = JSON.parse(req.body.sauce);
@@ -125,36 +125,55 @@ exports.deleteSauce = (req, res, next) => {
   });
 };
 
-//when user selects "like" button
+//1, 0, -1 like
 exports.toLike = (req, res, next) => {
-  const classLikes = document.querySelector("#likes");
-  const thumbsUp = classLikes.firstChild;
-  const likes = sauce.likes;
-  const likesNumbShown = classLikes.lastChild;
-  const sauce = new Sauce(req.body.sauce);
-  const usersLiked = sauce.usersLiked;
-  const userId = sauce.userId;
-  thumbsUp.addEventListener("click", () => {
-    Sauce.find()
-      .then((sauces) => {
-        let i = sauce.userId;
-        for (let i of usersLiked) {
-          if (!usersLiked.includes("userId")) {
-            usersLiked.push(userId);
-            likes += 1;
-            likesNumbShown = likes;
-            res.status(200).json(sauce);
-            message: "like number and id added";
-          } else {
-            null;
-          }
-        }
-      })
-      .catch((error) => {
-        res.status(400).json({ error: error });
-      });
-  });
+  const id = req.params.id;
+  const like = req.body.like;
+  const userId = req.body.userId;
+  Sauce.findOne({ _id: id })
+    .then((sauce) => {
+      let usersLiked = sauce.usersLiked;
+      let usersDisliked = sauce.usersDisliked;
+      if (like === 1 && !usersLiked.includes(userId)) {
+        resetLikes(usersLiked, userId, sauce, usersDisliked);
+        usersLiked.push(userId);
+        sauce.likes += 1;
+      } else if (like === -1 && !usersDisliked.includes(userId)) {
+        resetLikes(usersLiked, userId, sauce, usersDisliked);
+        usersDisliked.push(userId);
+        sauce.dislikes += 1;
+      } else if (like === 0) {
+        resetLikes(usersLiked, userId, sauce, usersDisliked);
+      } else {
+        throw new Error("Invalid like request");
+      }
+      Sauce.updateOne({ _id: id }, sauce)
+        .then(() => {
+          res.status(200).json({ message: "like number and id added" });
+        })
+        .catch((error) => {
+          res.status(500).json({
+            error: `Failed to update sauce: ${error.message || error}`,
+          });
+        });
+    })
+    .catch((error) => {
+      res.status(400).json({ error: error.message || error });
+    });
 };
 
+//resetLikes
+function resetLikes(usersLiked, userId, sauce, usersDisliked) {
+  if (usersLiked.includes(userId)) {
+    const index = usersLiked.indexOf[userId];
+    usersLiked.splice(index, 1);
+    sauce.likes--;
+  }
+  if (usersDisliked.includes(userId)) {
+    const index = usersDisliked.indexOf[userId];
+    usersDisliked.splice(index, 1);
+    sauce.dislikes--;
+  }
+}
 //when user selects "dislike" button
 //when user decides to revert the decision
