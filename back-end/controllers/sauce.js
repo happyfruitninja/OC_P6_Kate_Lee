@@ -4,20 +4,27 @@ const fs = require("fs"); //file system
 
 //adding a sauce with/without a file
 exports.createSauce = (req, res, next) => {
-  const url = req.protocol + "://" + req.get("host");
-  req.body.sauce = JSON.parse(req.body.sauce);
+  let imageUrl = null;
+  let requestedSauce;
+  if (req.file) {
+    const url = req.protocol + "://" + req.get("host");
+    requestedSauce = JSON.parse(req.body.sauce);
+    imageUrl = url + "/images/" + req.file.filename;
+  } else {
+    requestedSauce = req.body;
+  }
   const sauce = new Sauce({
-    name: req.body.sauce.name,
-    manufacturer: req.body.sauce.manufacturer,
-    description: req.body.sauce.description,
-    heat: req.body.sauce.heat,
+    name: requestedSauce.name,
+    manufacturer: requestedSauce.manufacturer,
+    description: requestedSauce.description,
+    heat: requestedSauce.heat,
     likes: 0,
     dislikes: 0,
-    imageUrl: url + "/images/" + req.file.filename,
-    mainPepper: req.body.sauce.mainPepper,
+    imageUrl,
+    mainPepper: requestedSauce.mainPepper,
     usersLiked: [],
     usersDisliked: [],
-    userId: req.body.sauce.userId,
+    userId: requestedSauce.userId,
   });
   sauce
     .save()
